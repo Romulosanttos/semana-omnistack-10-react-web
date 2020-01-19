@@ -8,8 +8,8 @@ export default function DevForm({ onSubmit }) {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
+      ({ coords }) => {
+        const { latitude, longitude } = coords;
         setLatitude(latitude);
         setLongitude(longitude);
       },
@@ -21,7 +21,7 @@ export default function DevForm({ onSubmit }) {
       }
     );
   }, []);
-  
+
   async function handleSubmit(e) {
     e.preventDefault();
     await onSubmit({
@@ -44,8 +44,8 @@ export default function DevForm({ onSubmit }) {
           id="username_github"
           required
           value={github_username}
-          onChange={e => {
-            setGithubUsername(e.target.value);
+          onChange={({ target }) => {
+            setGithubUsername(target.value);
           }}
         />
       </div>
@@ -57,8 +57,8 @@ export default function DevForm({ onSubmit }) {
           id="techs"
           required
           value={techs}
-          onChange={e => {
-            setTechs(e.target.value);
+          onChange={({ target }) => {
+            setTechs(target.value);
           }}
         />
       </div>
@@ -72,8 +72,8 @@ export default function DevForm({ onSubmit }) {
             id="latitude"
             required
             value={latitude}
-            onChange={e => {
-              setLatitude(e.target.value);
+            onChange={({ target }) => {
+              setLatitude(target.value);
             }}
           />
         </div>
@@ -86,8 +86,8 @@ export default function DevForm({ onSubmit }) {
             id="longitude"
             required
             value={longitude}
-            onChange={e => {
-              setLongitude(e.target.value);
+            onChange={({ target }) => {
+              setLongitude(target.value);
             }}
           />
         </div>
