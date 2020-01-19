@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "./services/api";
 
 import "./global.css";
 import "./App.css";
@@ -6,6 +7,8 @@ import "./Sidebar.css";
 import "./Main.css";
 
 function App() {
+  const [devs, setDevs] = useState([]);
+
   const [github_username, setGithubUsername] = useState("");
   const [techs, setTechs] = useState("");
   const [latitude, setLatitude] = useState("");
@@ -27,8 +30,31 @@ function App() {
     );
   }, []);
 
+  useEffect(() => {
+    async function loadDevs() {
+      await api.get("/devs").then(({ data }) => {
+        setDevs(data);
+      });
+    }
+
+    loadDevs();
+  }, []);
+
   async function handleAddDev(e) {
     e.preventDefault();
+
+    await api
+      .post("/devs", {
+        github_username,
+        techs,
+        latitude,
+        longitude
+      })
+      .then(({ data }) => {
+        setTechs("");
+        setGithubUsername("");
+        setDevs([...devs, data]);
+      });
   }
 
   return (
@@ -96,70 +122,23 @@ function App() {
       </aside>
       <main>
         <ul>
-          <li className="dev-item">
-            <header>
-              <img
-                src="https://avatars0.githubusercontent.com/u/11372354?s=460&v=4"
-                alt="Romulo Santos"
-              />
-              <div className="user-info">
-                <strong>Romulo Santos</strong>
-                <span>ReactJS, React Native, Node.js, Graphql</span>
-              </div>
-            </header>
-            <p>Full Stack Developer</p>
-            <a href="https://github.com/Romulosanttos">
-              Acessar perfil no GitHub
-            </a>
-          </li>
-          <li className="dev-item">
-            <header>
-              <img
-                src="https://avatars0.githubusercontent.com/u/11372354?s=460&v=4"
-                alt="Romulo Santos"
-              />
-              <div className="user-info">
-                <strong>Romulo Santos</strong>
-                <span>ReactJS, React Native, Node.js, Graphql</span>
-              </div>
-            </header>
-            <p>Full Stack Developer</p>
-            <a href="https://github.com/Romulosanttos">
-              Acessar perfil no GitHub
-            </a>
-          </li>
-          <li className="dev-item">
-            <header>
-              <img
-                src="https://avatars0.githubusercontent.com/u/11372354?s=460&v=4"
-                alt="Romulo Santos"
-              />
-              <div className="user-info">
-                <strong>Romulo Santos</strong>
-                <span>ReactJS, React Native, Node.js, Graphql</span>
-              </div>
-            </header>
-            <p>Full Stack Developer</p>
-            <a href="https://github.com/Romulosanttos">
-              Acessar perfil no GitHub
-            </a>
-          </li>
-          <li className="dev-item">
-            <header>
-              <img
-                src="https://avatars0.githubusercontent.com/u/11372354?s=460&v=4"
-                alt="Romulo Santos"
-              />
-              <div className="user-info">
-                <strong>Romulo Santos</strong>
-                <span>ReactJS, React Native, Node.js, Graphql</span>
-              </div>
-            </header>
-            <p>Full Stack Developer</p>
-            <a href="https://github.com/Romulosanttos">
-              Acessar perfil no GitHub
-            </a>
-          </li>
+          {devs.map(
+            ({ _id, name, avatar_url, techs, bio, github_username }) => (
+              <li key={_id} className="dev-item">
+                <header>
+                  <img src={avatar_url} alt={name} />
+                  <div className="user-info">
+                    <strong>{name}</strong>
+                    <span>{techs.join(", ")}</span>
+                  </div>
+                </header>
+                <p>{bio}</p>
+                <a href={`https://github.com/${github_username}`}>
+                  Acessar perfil no GitHub
+                </a>
+              </li>
+            )
+          )}
         </ul>
       </main>
     </div>
